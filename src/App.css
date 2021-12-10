@@ -1,0 +1,208 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.App {
+  text-align: center;
+  word-break: break-all;
+  color: #4d4d4d;
+}
+
+button {
+  cursor: pointer;
+}
+
+.appHeader {
+  color: rgba(175, 47, 47, 0.15);
+  font-size: 100px;
+  margin-bottom: 20px;
+}
+
+.container {
+  width: 550px;
+  margin: 0 auto;
+}
+
+.todoList {
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 10%);
+  font-size: 24px;
+}
+
+.todoList input::-webkit-input-placeholder {
+	font-style: italic;
+	font-weight: 300;
+	color: #e6e6e6;
+}
+
+.todoList input {
+  border: none;
+  outline: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  font-size: inherit;
+  color: inherit;
+}
+
+.todoList .list {
+  border-top: 1px solid #e6e6e6;
+}
+
+.taskTitle {
+  text-align: left;
+  padding: 15px;
+}
+
+.addTask form {
+  height: 100%;
+}
+
+.row {
+  display: flex;
+  position: relative;
+}
+
+.row .small {
+  width: 60px;
+  padding: 0 10px;
+}
+
+.row .big {
+  flex: 1;
+}
+
+.taskEdit {
+  margin-right: -60px;
+  z-index: 1;
+}
+
+.taskEdit input {
+  border: 1px solid #999;
+  box-shadow: inset 0 -1px 5px 0 rgb(0 0 0 / 20%);
+  height: 62px;
+}
+
+.todoItem {
+  border-bottom: 1px solid #ededed;
+}
+
+.todoItem:last-child {
+  border-bottom: none;
+}
+
+.todoItem:hover .deleteTask button {
+  display: block;
+}
+
+.todoItem .selectTask, .selectAll {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.todoItem .selectTask input[type="checkbox"] {
+  display: block;
+  border-radius: 50px;
+  width: 30px;
+  height: 30px;
+}
+
+.check {
+  border: 1px solid rgb(204 204 204 / 46%);
+  border-radius: 50px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  position: relative;
+}
+
+.todoItem.done .selectTask .check, .check.checked {
+  border-color: rgb(0 128 0 / 46%);
+}
+
+.todoItem.done .selectTask .check::before, .todoItem.done .selectTask .check::after, .check.checked::before, .check.checked::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: rgb(0 128 0 / 46%);
+  position: absolute;
+}
+
+.todoItem.done .selectTask .check::before, .check.checked::before {
+  width: 6px;
+  top: 52%;
+  left: 8px;
+  transform: rotate(45deg);
+}
+
+.todoItem.done .selectTask .check::after, .check.checked::after {
+  width: 10px;
+  right: 7px;
+  top: 49%;
+  transform: rotate(-45deg);
+}
+
+.todoItem.done .taskTitle {
+  color: #d9d9d9;
+  text-decoration: line-through;
+}
+
+.deleteTask {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteTask button {
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 20px;
+  color: #cc9a9a;
+  line-height: 1;
+  display: none;
+  font-weight: 700;
+}
+
+.appFooter {
+  display: flex;
+  justify-content: space-between;
+  color: #777;
+  padding: 10px 15px;
+  border-top: 1px solid #e6e6e6;
+}
+
+.appFooter .tasksCount, .appFooter .clearCompleted {
+  width: 20%;
+}
+
+.appFooter .tasksCount {
+  text-align: left;
+}
+
+.appFooter .clearCompleted {
+  text-align: right;
+}
+
+
+.appFooter .clearCompleted button {
+  border: none;
+  background: none;
+  text-decoration: underline;
+}
+
+.appFooter .tasksFilter button {
+  margin: 0 5px;
+  padding: 0 5px;
+}
+
+.guide {
+  color: #bfbfbf;
+  font-size: 10px;
+  text-shadow: 0 1px 0 rgb(255 255 255 / 50%);
+  text-align: center;
+  margin-top: 30px;
+}
