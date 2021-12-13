@@ -9,6 +9,7 @@ const axiosClient: AxiosInstance = axios.create({
 });
 
 axiosClient.interceptors.request.use(function (config) {
+  config.params = {...config.params, sortBy: 'createdAt', orderBy: 'asc'}
   setLoading()
   return config;
 }, function (error) {
