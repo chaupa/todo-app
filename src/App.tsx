@@ -1,77 +1,65 @@
 import React, { useEffect, useState } from 'react';
+import tasksApi from './api/tasksApi';
 import './App.css';
 import TodoList from './component/todoList';
+import { FilterTasksEnum, HandleTaskEnum, Task } from './types';
 
-export type Task = {
-  id: number
-  title: string
-  isDone: boolean
-}
-
-export enum HandleTaskEnum {
-  Update = 'update',
-  Delete = 'delete'
-}
-
-export enum FilterTasksEnum {
-  All = 'all',
-  Active = 'active',
-  Completed = 'completed',
-  ClearCompleted = 'clear completed'
-}
-
-const App = () => {
+const App = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([])
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
   const [dataSource, setDataSource] = useState<Task[]>(tasks)
-  const [isCompleteAllTasks, setIsCompleteAllTasks] = useState(false)
+  const [isCompleteAllTasks, setIsCompleteAllTasks] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  useEffect(() => {
-    if (filteredTasks.length > 0) {
-      setDataSource(filteredTasks)
-    } else {
-      setDataSource(tasks)
+  const getTasks = async (): Promise<void> => {
+    try {
+      const tasksList = await tasksApi.getAll() as unknown
+      console.log(tasksList)
+      setTasks([
+        ...tasksList as Task[]
+      ])
+    } catch (error) {
+      console.log(error)
     }
-  }, [filteredTasks, tasks])
-
-  useEffect(() => {
-    const tasksList = [...tasks]
-    const completedTasksList = tasksList.map((task) => {
-      if (isCompleteAllTasks === true) {
-        task.isDone = true
-      } else {
-        task.isDone = false
-      }
-      return task
-    })
-    setTasks(completedTasksList)
-  }, [isCompleteAllTasks])
-
-  const addTask = (title: string) => {
-    const taskID = Math.random()
-    setTasks((currentTasks) => [
-      ...currentTasks,
-      {
-        id: taskID,
-        title: title,
-        isDone: false
-      }
-    ])
   }
 
-  const handleTask = (task: Task, type: HandleTaskEnum) => {
-    const tasksList = [...tasks]
-    const taskIndex = tasksList.findIndex(item => item.id === task.id)
-    if (type === 'update') {
-      tasksList[taskIndex] = task
+  const addTask = async (title: string): Promise<void> => {
+    try {
+      await tasksApi.post({
+        title: title
+      })
+      getTasks()
+    } catch (error) {
+      console.log(error)
     }
-    if (type === 'delete') {
-      tasksList.splice(taskIndex, 1)
-    }
-    setTasks(tasksList)
   }
 
-  const filterTasks = (key: FilterTasksEnum) => {
+  const handleTask = (task: Task, type: HandleTaskEnum): void => {
+    if (type === HandleTaskEnum.Update) {
+      const updateTask = async () => {
+        try {
+          await tasksApi.put(task)
+          getTasks()
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      updateTask()
+    }
+    if (type === HandleTaskEnum.Delete) {
+      const deleteTask = async () => {
+        try {
+          await tasksApi.delete(task)
+          getTasks()
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      deleteTask()
+    }
+  }
+
+  const filterTasks = (key: FilterTasksEnum): void => {
     const tasksList = [...tasks]
     let filteredTasksList = []
     switch (key) {
@@ -95,12 +83,16 @@ const App = () => {
         setFilteredTasks(filteredTasksList)
         break
       case FilterTasksEnum.ClearCompleted:
-        filteredTasksList = tasksList.filter((task => {
-          return task.isDone === false
+        const tasksIdToDelete = tasksList.filter((task => {
+          return task.isDone === true
         }))
+        console.log(tasksIdToDelete)
+        // filteredTasksList = tasksList.filter((task => {
+        //   return task.isDone === false
+        // }))
         setIsCompleteAllTasks(false)
         setFilteredTasks([])
-        setTasks(filteredTasksList)
+        // setTasks(filteredTasksList)
         break
       default:
         break
@@ -112,7 +104,7 @@ const App = () => {
     return false
   }
 
-  const tasksCount = () => {
+  const tasksCount = (): string => {
     let text = ''
     if (dataSource.length > 1) {
       text += `${dataSource.length} items`
@@ -122,6 +114,31 @@ const App = () => {
 
     return text
   }
+
+  useEffect(() => {
+    getTasks()
+  }, [])
+
+  useEffect(() => {
+    if (filteredTasks.length > 0) {
+      setDataSource(filteredTasks)
+    } else {
+      setDataSource(tasks)
+    }
+  }, [filteredTasks, tasks])
+
+  useEffect(() => {
+    const tasksList = [...tasks]
+    const completedTasksList = tasksList.map((task) => {
+      if (isCompleteAllTasks === true) {
+        task.isDone = true
+      } else {
+        task.isDone = false
+      }
+      return task
+    })
+    setTasks(completedTasksList)
+  }, [isCompleteAllTasks])
 
   return (
     <div className="App">

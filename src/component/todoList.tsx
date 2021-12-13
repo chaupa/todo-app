@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
-import { FilterTasksEnum, HandleTaskEnum, Task } from '../App'
+import { FilterTasksEnum, HandleTaskEnum, Task } from '../types'
 import TodoItem from './todoItem'
 
 type TodoListProps = {
@@ -47,7 +47,7 @@ const TodoList = ({
         </div>
         <div className="addTask big">
           <form onSubmit={handleAddTask}>
-            <input type="text" name="title" placeholder="What needs to be done?" />
+            <input type="text" name="title" id="addTask" autoFocus placeholder="What needs to be done?" />
           </form>
         </div>
       </div>

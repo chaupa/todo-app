@@ -4,6 +4,18 @@
   box-sizing: border-box;
 }
 
+body.loading .check,
+body.loading .taskTitle,
+body.loading input,
+body.loading button {
+  pointer-events: none;
+  cursor: wait;
+}
+
+body.loading input {
+  background: none;
+}
+
 .App {
   text-align: center;
   word-break: break-all;
