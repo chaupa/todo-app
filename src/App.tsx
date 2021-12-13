@@ -9,7 +9,6 @@ const App = (): JSX.Element => {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
   const [dataSource, setDataSource] = useState<Task[]>(tasks)
   const [isCompleteAllTasks, setIsCompleteAllTasks] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const getTasks = async (): Promise<void> => {
     try {
