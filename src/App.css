@@ -4,10 +4,15 @@
   box-sizing: border-box;
 }
 
-body.loading .check,
-body.loading .taskTitle,
-body.loading input,
-body.loading button {
+html {
+  font-size: 14px;
+}
+
+body {
+  min-height: 100vh;
+}
+
+body.loading {
   pointer-events: none;
   cursor: wait;
 }
@@ -28,18 +33,20 @@ button {
 
 .appHeader {
   color: rgba(175, 47, 47, 0.15);
-  font-size: 100px;
-  margin-bottom: 20px;
+  font-size: 60px;
+  margin-bottom: 50px;
 }
 
 .container {
   width: 550px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 50px 15px 0 15px;
 }
 
 .todoList {
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 20%), 0 25px 50px 0 rgb(0 0 0 / 10%);
-  font-size: 24px;
+  font-size: 18px;
 }
 
 .todoList input::-webkit-input-placeholder {
@@ -68,6 +75,19 @@ button {
   padding: 15px;
 }
 
+.todoList .header {
+  position: relative;
+}
+
+.taskExist {
+  position: absolute;
+  top: -55%;
+  font-size: 18px;
+  color: rgb(175 47 47 / 65%);
+  width: 100%;
+  left: 0;
+}
+
 .addTask form {
   height: 100%;
 }
@@ -78,8 +98,8 @@ button {
 }
 
 .row .small {
-  width: 60px;
-  padding: 0 10px;
+  width: 40px;
+  padding: 0 5px;
 }
 
 .row .big {
@@ -125,8 +145,8 @@ button {
 .check {
   border: 1px solid rgb(204 204 204 / 46%);
   border-radius: 50px;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
   position: relative;
 }
@@ -146,14 +166,14 @@ button {
 .todoItem.done .selectTask .check::before, .check.checked::before {
   width: 6px;
   top: 52%;
-  left: 8px;
+  left: 3px;
   transform: rotate(45deg);
 }
 
 .todoItem.done .selectTask .check::after, .check.checked::after {
   width: 10px;
-  right: 7px;
-  top: 49%;
+  right: 2px;
+  top: 42%;
   transform: rotate(-45deg);
 }
 
@@ -172,7 +192,7 @@ button {
   border: none;
   outline: none;
   background: none;
-  font-size: 20px;
+  font-size: 16px;
   color: #cc9a9a;
   line-height: 1;
   display: none;
@@ -199,7 +219,6 @@ button {
   text-align: right;
 }
 
-
 .appFooter .clearCompleted button {
   border: none;
   background: none;
@@ -209,6 +228,7 @@ button {
 .appFooter .tasksFilter button {
   margin: 0 5px;
   padding: 0 5px;
+  font-size: 12px;
 }
 
 .guide {
@@ -217,4 +237,41 @@ button {
   text-shadow: 0 1px 0 rgb(255 255 255 / 50%);
   text-align: center;
   margin-top: 30px;
+}
+
+@media screen and (min-width: 768px) {
+  .appHeader {
+    font-size: 100px;
+  }
+
+  .todoList {
+    font-size: 24px;
+  }
+
+  .todoList .header {
+    padding-left: 60px;
+  }
+
+  .row .small {
+    width: 60px;
+    padding: 0 10px;
+  }
+
+  .check {
+    width: 30px;
+    height: 30px;
+  }
+
+  .todoItem.done .selectTask .check::before, .check.checked::before {
+    left: 8px;
+  }
+
+  .todoItem.done .selectTask .check::after, .check.checked::after {
+    right: 7px;
+    top: 49%;
+  }
+
+  .deleteTask button {
+    font-size: 20px;
+  }
 }

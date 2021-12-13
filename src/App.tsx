@@ -1,19 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FilterTasksEnum, Task } from './types';
+import TodoList from './component/todoList';
 import tasksApi from './api/tasksApi';
 import './App.css';
-import TodoList from './component/todoList';
-import { FilterTasksEnum, HandleTaskEnum, Task } from './types';
 
 const App = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([])
-  const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
-  const [dataSource, setDataSource] = useState<Task[]>(tasks)
-  const [isCompleteAllTasks, setIsCompleteAllTasks] = useState<boolean>(false)
 
-  const getTasks = async (): Promise<void> => {
+  const getTasks = async (isDone?: boolean): Promise<void> => {
     try {
-      const tasksList = await tasksApi.getAll() as unknown
-      console.log(tasksList)
+      const tasksList = await tasksApi.getAll(isDone) as unknown
       setTasks([
         ...tasksList as Task[]
       ])
@@ -25,6 +21,7 @@ const App = (): JSX.Element => {
   const addTask = async (title: string): Promise<void> => {
     try {
       await tasksApi.post({
+        id: Math.random(),
         title: title
       })
       getTasks()
@@ -33,84 +30,47 @@ const App = (): JSX.Element => {
     }
   }
 
-  const handleTask = (task: Task, type: HandleTaskEnum): void => {
-    if (type === HandleTaskEnum.Update) {
-      const updateTask = async () => {
-        try {
-          await tasksApi.put(task)
-          getTasks()
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      updateTask()
+  const deleteTask = async (taskID: number) => {
+    try {
+      await tasksApi.delete(taskID)
+      getTasks()
+    } catch (error) {
+      console.log(error)
     }
-    if (type === HandleTaskEnum.Delete) {
-      const deleteTask = async () => {
-        try {
-          await tasksApi.delete(task)
-          getTasks()
-        } catch (error) {
-          console.log(error)
-        }
-      }
-      deleteTask()
+  }
+
+  const updateTask = async (task: Task) => {
+    try {
+      await tasksApi.put(task)
+      getTasks()
+    } catch (error) {
+      console.log(error)
     }
   }
 
   const filterTasks = (key: FilterTasksEnum): void => {
-    const tasksList = [...tasks]
-    let filteredTasksList = []
     switch (key) {
       case FilterTasksEnum.All:
-        setFilteredTasks([])
-        setDataSource(tasksList)
+        getTasks()
         break
       case FilterTasksEnum.Active:
-        filteredTasksList = tasksList.filter((task => {
-          return task.isDone === false
-        }))
-        setFilteredTasks(filteredTasksList)
+        getTasks(false)
         break
       case FilterTasksEnum.Completed:
-        filteredTasksList = tasksList.filter((task => {
-          return task.isDone === true
-        }))
-        if (filteredTasksList.length === 0) {
-          setDataSource(filteredTasksList)
-        }
-        setFilteredTasks(filteredTasksList)
-        break
-      case FilterTasksEnum.ClearCompleted:
-        const tasksIdToDelete = tasksList.filter((task => {
-          return task.isDone === true
-        }))
-        console.log(tasksIdToDelete)
-        // filteredTasksList = tasksList.filter((task => {
-        //   return task.isDone === false
-        // }))
-        setIsCompleteAllTasks(false)
-        setFilteredTasks([])
-        // setTasks(filteredTasksList)
+        getTasks(true)
         break
       default:
         break
     }
   }
 
-  const handleCompleteAllTasks = () => {
-    setIsCompleteAllTasks(!isCompleteAllTasks)
-    return false
-  }
-
   const tasksCount = (): string => {
     let text = ''
-    if (dataSource.length > 1) {
-      text += `${dataSource.length} items`
+    if (tasks.length > 1) {
+      text += `${tasks.length} items`
     } else {
-      text += `${dataSource.length} item`
+      text += `${tasks.length} item`
     }
-
     return text
   }
 
@@ -118,57 +78,31 @@ const App = (): JSX.Element => {
     getTasks()
   }, [])
 
-  useEffect(() => {
-    if (filteredTasks.length > 0) {
-      setDataSource(filteredTasks)
-    } else {
-      setDataSource(tasks)
-    }
-  }, [filteredTasks, tasks])
-
-  useEffect(() => {
-    const tasksList = [...tasks]
-    const completedTasksList = tasksList.map((task) => {
-      if (isCompleteAllTasks === true) {
-        task.isDone = true
-      } else {
-        task.isDone = false
-      }
-      return task
-    })
-    setTasks(completedTasksList)
-  }, [isCompleteAllTasks])
-
   return (
     <div className="App">
       <div className="container">
         <header className="appHeader">todos</header>
         <TodoList
           addTask={addTask}
-          handleTask={handleTask}
-          tasks={dataSource}
+          updateTask={updateTask}
+          deleteTask={deleteTask}
+          tasks={tasks}
           filterTasks={filterTasks}
-          handleCompleteAllTasks={handleCompleteAllTasks}
-          isCompleteAllTasks={isCompleteAllTasks}
         />
-        {tasks.length > 0 && (
-          <>
-            <footer className="appFooter">
-              <div className="tasksCount">
-                {tasksCount()}
-              </div>
-              <div className="tasksFilter">
-                <button onClick={() => filterTasks(FilterTasksEnum.All)}>All</button>
-                <button onClick={() => filterTasks(FilterTasksEnum.Active)}>Active</button>
-                <button onClick={() => filterTasks(FilterTasksEnum.Completed)}>Completed</button>
-              </div>
-              <div className="clearCompleted">
-                <button onClick={() => filterTasks(FilterTasksEnum.ClearCompleted)}>Clear completed</button>
-              </div>
-            </footer>
-            <p className="guide">Double-click to edit a todo</p>
-          </>
-        )}
+        <footer className="appFooter">
+          <div className="tasksCount">
+            {tasksCount()}
+          </div>
+          <div className="tasksFilter">
+            <button onClick={() => filterTasks(FilterTasksEnum.All)}>All</button>
+            <button onClick={() => filterTasks(FilterTasksEnum.Active)}>Active</button>
+            <button onClick={() => filterTasks(FilterTasksEnum.Completed)}>Completed</button>
+          </div>
+          {/* <div className="clearCompleted">
+            <button onClick={() => filterTasks(FilterTasksEnum.ClearCompleted)}>Clear completed</button>
+          </div> */}
+        </footer>
+        <p className="guide">Double-click to edit a todo</p>
       </div>
     </div>
   );

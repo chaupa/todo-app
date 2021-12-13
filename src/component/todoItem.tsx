@@ -1,15 +1,11 @@
-import classNames from 'classnames'
 import React, { useEffect, useState } from 'react'
-import { HandleTaskEnum, Task } from '../types'
-
-type TodoItemProps = {
-  task: Task
-  handleTask: (task: Task, type: HandleTaskEnum) => void
-}
+import { Task, TodoItemProps } from '../types'
+import classNames from 'classnames'
 
 const TodoItem = ({
   task,
-  handleTask
+  updateTask,
+  deleteTask,
 }: TodoItemProps) => {
   const [currentTask, setCurrentTask] = useState<Task>(task)
   const [taskTitle, setTaskTitle] = useState<string>(currentTask.title)
@@ -24,14 +20,14 @@ const TodoItem = ({
   }
 
   const handleDeleteTask = (selectedTask: Task): void => {
-    handleTask(selectedTask, HandleTaskEnum.Delete)
+    deleteTask(selectedTask.id)
   }
 
   const handleCompleteTask = (selectedTask: Task): void => {
-    handleTask({
+    updateTask({
       ...selectedTask,
       isDone: !currentTask.isDone
-    }, HandleTaskEnum.Update)
+    })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void | boolean => {
@@ -52,12 +48,12 @@ const TodoItem = ({
     if (!isEditing) {
       if (taskTitle !== currentTask.title) {
         if (taskTitle.trim().length > 0) {
-          handleTask({
+          updateTask({
             ...currentTask,
             title: taskTitle
-          }, HandleTaskEnum.Update)
+          })
         } else {
-          handleTask(currentTask, HandleTaskEnum.Delete)
+          deleteTask(currentTask.id)
         }
       }
     }
